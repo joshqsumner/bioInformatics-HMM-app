@@ -16,6 +16,11 @@ library(ape)
 library(shiny)
 
 # outside of visible app
+theme_set(theme_minimal() + # I like to make all the ggplots follow the same theme and hate typing it so here
+            theme(axis.line.y.left = element_line(),
+                  axis.line.x.bottom = element_line()))
+
+
 ## HMM Tab's hmm
 States = c("Fair", "Unfair") #two dice
 Symbols = 1:6 #both are six sided dice
@@ -106,7 +111,7 @@ fit_hmm_rd <- fit_model(init_hmm_rd, control_em = list(restart = list(times = 1)
 # depmixS4 outside app stuff
 data(speed)
 data(sp500)
-
+#I mean see how nice this is with depmixS4? granted it's not going to be doing as much in the tab but still
 
 # Define UI
 ui <- dashboardPage(skin="black",
@@ -121,8 +126,7 @@ ui <- dashboardPage(skin="black",
     menuItem("depmixS4::", tabName = "depmix_tab", icon=icon("award")),
     menuItem("vanillaICE::", tabName = "VI_tab", icon=icon("book")),
     menuItem("HMMER (CLI)", tabName = "hmmer_tab", icon=icon("cogs")), 
-    menuItem("Other", tabName = "other_tab", icon=icon("globe-americas")), 
-    menuItem("Other2", tabName = "other_tab_2", icon=icon("address-card")))), #I need to go update these icons, these ones are just random
+    menuItem("Viterbi Paths", tabName = "Viterbi_Paths", icon=icon("globe-americas")))), #I need to go update these icons, these ones are just random
   dashboardBody(
     tabItems(
       # Home Tab
@@ -135,14 +139,14 @@ ui <- dashboardPage(skin="black",
                   tags$li("Presentation can be downloaded here: ")
                 )),
                 tabPanel("Finding code/resources", tags$ol(
-                  tags$li("Code can be downloaded here: ."), 
-                  tags$li("Data can be viewed in tabs and is annotated in github"), 
+                  tags$li("Code can be downloaded here: https://github.com/joshqsumner/bioInformatics-HMM-app."), 
+                  tags$li("Data can be viewed in tabs and the code is annotated to a degree in github"), 
                   tags$li("Presentation: ")
                 )))),
       #R packages Tabs
       
       tabItem("hmm_tab", 
-              tabBox(title="R HMM Package", height="1000px", width="1000px",
+              tabBox(title="R HMM Package", height="1500px", width="1000px",
                      tabPanel("How HMM:: works", width="800px", p("For get started with HMM::
                                this package provides a toy example through the", 
                                                                   code('dishonestcasino()'), "function.
@@ -229,7 +233,7 @@ ui <- dashboardPage(skin="black",
       
       tabItem("aphid_tab", 
               tabBox(title = "R aphid Package",
-                     id = "aphidTab", height="1000px", width="1000px",
+                     id = "aphidTab", height="1750px", width="1000px",
                      tabPanel("How aphid:: Works",
                               p("This class were briefly introduced to aphid:: in lab 4. We mostly read documentation and created a
                                 visual representation of an HMM like this:"),
@@ -367,7 +371,7 @@ are depending on what the sequence is coming from. The default is NULL which onl
       
       
       tabItem("seqhmm_tab", 
-              tabBox(title="seqHMM:: R Package", height="1000px", width="1000px",
+              tabBox(title="seqHMM:: R Package", height="2000px", width="1000px",
                      tabPanel(
                        title="How it works",
                        p(code("seqHMM::"), " contains a variety of functions for building a variety of markov models including
@@ -444,7 +448,7 @@ are depending on what the sequence is coming from. The default is NULL which onl
               )),  
       
       tabItem("depmix_tab", 
-              tabBox(title="depmixS4:: R Package", height="1000px", width="1000px",
+              tabBox(title="depmixS4:: R Package", height="2000px", width="1000px",
                      tabPanel(
                        title="How depmixS4 works",
                       p("The ", code("depmixS4"), " package is a relatively new R package for handling 'dependent mixture models' (which is debatably the same as an HMM).
@@ -536,34 +540,65 @@ are depending on what the sequence is coming from. The default is NULL which onl
                      )),
       tabItem("VI_tab", 
               tabBox(title="vanillaICE:: BioConductor R Package", height="1000px", width="1000px",
+                     tabPanel("Basics of vanillaICE", 
+                              p("The ", code("vanillaICE"), " package is a fairly new and fairly specialized HMM based package for use with 
+                                chromosome alterations shown in SNP arrays. Being so specialized it has a couple of really cool specialized functions."),
+                                p("First off is the function ",code("hmm2()"), ". This function is intended for fitting a 6-state HMM to SNP arrays Log R Ratios
+                                  or B allele frequencies. 
+                                The states are homozygous deletion, hemizygous deletion, diploid copy number, 
+                                  diploid region of homozygosity, single copy gain, and two+ copy gain. The function uses a 
+                                  SnpArrayExperiment object as well as special EmissionParam and TransitionParam objects of the 
+                                  respective probabilities.")
+                              ),
                      tabPanel("Thoughts",
-                       p("Not a fan.")
+                       p("This is a really specialized package and due to the amount of data required to use it well and general Bioconductor
+                         dependencies I am not going far into it.")
                        )
                      )),
       
       # HMMER Tab
       
       tabItem("hmmer_tab", 
-              tabBox(title = "HMMER Software",
-                     id = "tabset1", height = "250px",
-                     tabPanel("History",  tags$ol(
-                       tags$li("HMMER history"), 
-                       tags$li("Washu Role"), 
-                       tags$li("Sean Eddy")),
+              tabBox(title = "HMMER Software", height = "1000px", width="1000px",
+                     tabPanel("History", 
+                              p("HMMER was written by Sean Eddy, the author of the review paper I used for this project.
+                                It is a profile HMM software used for aligning protein or nucleotide sequences or find homologs. HMMER is now
+                                used by many other software's as their HMM tool. It is available as either a downloaded CLI or on an online server through EBI."),
+                              br(),br(),br(),
+                              img(src="hmmerEX.png"),
+                              br(),br(),br(),
+                              p("The online interface is very user friendly and shows Score, Taxonomy, and Domain. It also has a download option which would allow you to download an HMM
+                                that could be read into R using the ", code('aphid::readPHMM()'), " function for other use."),
+                              img(src="hmmerRun.png")
+                              
+                              ),
                      tabPanel("Use", tags$ol(
                        tags$li("Using HMMER"), 
                        tags$li("Steps etc"), 
-                       tags$li("More steps/data needs")))))),
+                       tags$li("More steps/data needs"))))),
       
       ## Viterbi Algorithm should be included since that comes up a bunch
-      tabItem("Viterbi Paths", 
-              tabBox(title = "other",
-                     id = "tabset1", height = "250px", width="600px",
-                     tabPanel("Viterbi Math", "Explanation of importance"),
-                     tabPanel("Viterbi in Practice", "Explanation of importance"),
-                     tabPanel("Trial Size Revisited", "Explanation of importance of simulation/sample size")
+      tabItem("Viterbi_Paths", 
+              tabBox(title = "Viterbi",
+                     id = "vitTab", height = "1000px", width="1000px",
+                     tabPanel("Viterbi", 
+                              p("Viterbi Algorithm is essentially Dynamic Programming along all probability paths through hidden states
+                                given the emissions. This picture from 'Real-time detection of advanced persistent threats using information flow tracking and hidden markov models',
+                                G. Brogi 2018, is my favorite that I have seen."),
+                              br(),
+                              img(src="viterbi_path.png"),
+                              br(),
+                              p("Viterbi uses the observed emission given a series of hidden states by globally maximizing
+                                the probabability. This only works if we know the emission and transition probabilities. If we do not have those parameters
+                                then we would need to estimate them via learning through using Baum-Welch or viterbi learning. Viterbi Learning starts with an arbitrary estimate of parameters
+                                from which it creates a hidden path using the observations by decoding with Viterbi. From there it iterates making new parameters to fit the last 
+                                hidden path that was made, then creating a new hidden path with those parameters. That carries on until it converges on good estimates.
+                                This is good at answering a question like 'Was this HMM in state i at time k given observations?', it is not good at telling how certain we are about that answer.
+                                This is very similar to Baum-Welch.", br(), "This is also related to why the smaller sample sizes don't work well, penalties just don't add up quickly
+                                enough to be accurate without long sequences. For more local alignments the forward/backward options may be more helpful.")
+                              
+                              )
                      ))
-      ## Other
       )
     )
   )
@@ -847,7 +882,7 @@ output$depPlotly<-renderPlot({
   
   speed_test<-speed_test%>%
     mutate(true_state=ifelse(grepl("inc", corr), 2, 1))
-  check<-cbind(st2, predStates)
+  check<-cbind(speed_test, predStates)
   check<-check%>%
     dplyr::rename(pred_state=state)%>%
     mutate(correct=ifelse(true_state==pred_state, "True", "False"))%>%
