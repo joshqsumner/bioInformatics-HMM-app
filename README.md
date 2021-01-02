@@ -31,7 +31,7 @@ Little Maui's having trouble with his look
 You little semi-demi-mini-god
 Ouch! What a terrible performance
 Get the hook (get it?)
-You don't swing it like you used to, man
+You don't swing it like you used to, man 
 Yet I have to give you credit for my start
 And your tattoos on the outside
 For just like you I made myself a work of art
