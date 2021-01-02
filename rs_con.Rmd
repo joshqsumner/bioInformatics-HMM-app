@@ -1,0 +1,41 @@
+---
+title: "App Deployment"
+author: "Josh Sumner"
+subtitle: "finally remembering not to commit stuff i shouldn't"
+output:
+  html_document:
+    code_folding: hide
+    highlight: textmate
+    number_sections: yes
+    theme: cosmo
+    toc: yes
+    toc_depth: 4
+    toc_float: no
+  pdf_document:
+    toc: yes
+    toc_depth: '4'
+  word_document:
+    toc: yes
+    toc_depth: '4'
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(message = FALSE, warning = FALSE, comment = "")
+```
+
+```{r, eval=F}
+install.packages('rsconnect')
+```
+
+#V1
+
+```{r}
+library(rsconnect)
+rsconnect::setAccountInfo(name='josh-sumner',
+			  token=Sys.getenv('rs_token'),
+			  secret=Sys.getenv('rs secret'))
+```
+
+```{r}
+rsconnect::deployApp('./bioInformatics_HMM/')
+```

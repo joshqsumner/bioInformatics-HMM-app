@@ -364,7 +364,8 @@ are depending on what the sequence is coming from. The default is NULL which onl
                                   "Here I just used the first three bird's DNA to make the model, then aligned the remaining 5 birds using the model."),
                                 textOutput("alignedBirds"),
                                 br(),
-                                p("Sorry Ryan, I was going to add an option to input your own accession numbers but I decided I'd rather not.")
+                                p("Sorry Ryan, I was going to add an option to input your own accession numbers but I decided I'd rather not mess with it.")#,
+                                #textInput("genBankText", label="Input your Genbank Sequences (space separated)"), br(), plotOutput("genBankPlot")
                                 )
                   
                      )),
@@ -534,10 +535,7 @@ are depending on what the sequence is coming from. The default is NULL which onl
                                 code("mX <- depmix(y~1, nstates=X,family=poisson(), data=ydf)", br(),
                                       "set.seed(1)", br(),
                                      "fmX <- fit(mX,em=em.control(maxit=200))"))
-                              ),
-                     tabPanel("Biological Data", 
-                              p(""))
-                     )),
+                              ))),
       tabItem("VI_tab", 
               tabBox(title="vanillaICE:: BioConductor R Package", height="1000px", width="1000px",
                      tabPanel("Basics of vanillaICE", 
@@ -726,7 +724,7 @@ output$dishonestCasinoBootPlotly<-renderPlotly({
       list(x = mid, y = 20,
            text = paste0("<b> Range: ", round(100*min(results, na.rm=T), 2), "% - ", round(100*max(results, na.rm=T), 3), "% </b>"), showarrow = F, 
            font=list(size=10, color="black"))),
-      yaxis = list(title = 'Percent Accurate', range=c(0, 105), ticksuffix="%"),
+      yaxis = list(title = 'Percent Accurate', range=c(-5, 105), ticksuffix="%"),
       xaxis = list(title="Trial Number")
     )
 })
@@ -946,6 +944,14 @@ output$poissonBIC<-renderPlot({
   plot(1:5, c(BIC(fm1),BIC(fm2),BIC(fm3),BIC(fm4),BIC(fm5)),
        ty="b", ylab="BIC", xlab="Number of Hidden States")
 })
+
+# output$genBankPlot<-renderPlot({
+#   text<-input$genBankText
+#   accessionNumbers<-str_remove(text, ",")
+#   
+#   
+#   
+# })
 
 } #close server
 # Run the application 
