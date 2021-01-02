@@ -1,7 +1,7 @@
 # bioInformatics-HMM-app
 Repo to hold a shiny app for a little while. Not bothering with readMe for now, the app.R file is annotated some if you want.
 
-
+![make it look shiny](https://compote.slate.com/images/5332c88d-d920-4932-b462-2aa5fc88bfa9.jpg)
 
 Well, Tamatoa hasn't always been this glam
 I was a drab little crab once
