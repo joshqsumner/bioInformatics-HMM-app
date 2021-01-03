@@ -135,9 +135,7 @@ ui <- dashboardPage(skin="black",
                 id = "tabset1", height = "250px", width="600px",
                 tabPanel("Overview", tags$ol(
                   tags$li("The tabs to the left show examples of different HMM softwares/R packages."),
-                  tags$li("Code can be downloaded here: ."), 
-                  tags$li("Presentation can be downloaded here: ")
-                )),
+                  tags$li("Code and presentation can be downloaded here: https://josh-sumner.shinyapps.io/bioinformatics_hmm/."))),
                 tabPanel("Finding code/resources", tags$ol(
                   tags$li("Code can be downloaded here: https://github.com/joshqsumner/bioInformatics-HMM-app."), 
                   tags$li("Data can be viewed in tabs and the code is annotated to a degree in github"), 
