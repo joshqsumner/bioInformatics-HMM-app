@@ -115,7 +115,7 @@ data(sp500)
 
 # Define UI
 ui <- dashboardPage(skin="black",
-  dashboardHeader(title = "BioInformatics M21-550"),
+  dashboardHeader(title = "M21-550"),
   dashboardSidebar(sidebarMenu(
     menuItem("Home",
              tabName = "home",
@@ -181,10 +181,10 @@ ui <- dashboardPage(skin="black",
                      ),
                      tabPanel( 
                        title="Dishonest Casino HMM",
-                       numericInput('die_throws', 'Number of Rolls',
+                       numericInput('die_throws', 'Number of Rolls (max 5000)',
                                    value = 1000,
                                    min = 2,
-                                   max = 1000000),
+                                   max = 5000),
                        plotOutput("dishonestCasinoBase", width="750px", height="500px"),
                        br(),
                        br(),
@@ -263,18 +263,20 @@ ui <- dashboardPage(skin="black",
                                       readable by 'HMMER' or ", code("readPHMM()"), " if you are so inclined."),
                               br(),
                               p("With a HMM/PHMM object ready you can plot it to get a general feel for what is going on or use 
-                                other functions for predictions or evaluations which I'll go more into here?")
+                                other functions for predictions or evaluations if you are at that stage.")
                               
                               ),
                      tabPanel("Example Data", 
                               p("The ", code("ape::"), " package has a set of 15 woodmouse 
-                                DNA sequences which, using ", code("derivePHMM()"), " makes the following Profile HMM. Here all the possible options
+                                DNA sequences which, using ", code("derivePHMM()"), " makes the following Profile HMM (only the first few positions are plotted here). Here all the possible options
                                 for a DNA sequence are present (there are only the 4 nucleotide options, so it'd be really strange to not have them all shown)
                                 so you do not need to specify a 'residue' argument."),
                               br(),
                               plotOutput("woodmousePlot"),
                               br(),
                               p("This visualization is coming from woodmouse DNA sequences in a DNAbin object in R.
+                                The DNAbin object is pretty friendly and you can make it approximate a dataframe with a call like:
+                                ",code("as.character(cbind(x, fill.with.gaps = F))"),". 
                                 Below is a printout of the first few positions of that sequence as a Table."),
                               br(),
                               dataTableOutput("woodmouseData"),
@@ -443,9 +445,7 @@ are depending on what the sequence is coming from. The default is NULL which onl
                               br(),
                               dataTableOutput("rdTrans")
                               
-                              )#,
-                    # tabPanel("Thoughts on seqHMM", "If i have other thoughts maybe those go here?")
-                    # )
+                              )
               )),  
       
       tabItem("depmix_tab", 
@@ -459,18 +459,17 @@ are depending on what the sequence is coming from. The default is NULL which onl
                       p(code("depmixS4::depmix()"), "is one of the primary functions of interest and is used to create a special ",
                         code("depmix"), " object. That object has a variety of 'slots' with information describing the model but it is not a completed model yet and the parameters are unfitted.
                         The model can be fit to your data with the ", code("depmixS4::fit()"), " package. The ", 
-                        code("depmix()", " function provides a lot of versatility to how you want to build your model, the next tab has 
-                             several examples of how it can be used in different applications."))
-                     ),
+                        code("depmix()"), " function provides a lot of versatility to how you want to build your model, the next tab has 
+                             several examples of how it can be used in different applications.")),
                      tabPanel("Speed Data", 
                               p("Using a sample dataset of response times given the presence or absence of incentivization we can make an HMM.
                                 Pick a number or results to resample (original data is fairly small, resampling will work better to show HMM properties),
                                 a number to train on (remainder will be shown in test set), and set a seed if you want to."),
                               
-                              numericInput("depTraining", "Set Training Data Size", value=300, min=10, max=1000),
-                              numericInput("depTest", "Set Test Data Size", value=600, min=10, max=10000),
+                              numericInput("depTraining", "Set Training Data Size (max 3000)", value=3000, min=10, max=3000),
+                              numericInput("depTest", "Set Test Data Size (max 3000)", value=600, min=10, max=3000),
                               checkboxInput("depSeedCheck", "Set a Sampling Seed?", value=T),
-                              conditionalPanel(condition = "input.depSeedCheck == 'true'",
+                              conditionalPanel(condition = "input.depSeedCheck == true",
                                                numericInput("depSeed", "Specify Seed:", value=123, min=1, max=10000)
                               ),
                               checkboxInput(
@@ -478,7 +477,7 @@ are depending on what the sequence is coming from. The default is NULL which onl
                               ),
                               conditionalPanel(
                                 condition = 'input.depWhichPlotter == true', 
-                                plotlyOutput('depPlotly')
+                                plotlyOutput('depPlotly', width="750px", height="500px")
                               ),
                               conditionalPanel(
                                 condition = 'input.depWhichPlotter == false',
@@ -526,12 +525,12 @@ are depending on what the sequence is coming from. The default is NULL which onl
                               numericInput("lambda2", "Lambda for second part of data", value=2, min=0, max=5),
                               numericInput("length2", "Length of second part of data", value=50, min=1, max=5000),
                               checkboxInput("bicSeedCheck", "Set a Sampling Seed?", value=T),
-                              conditionalPanel(condition = "input.bicSeedCheck == 'true'",
+                              conditionalPanel(condition = "input.bicSeedCheck == true",
                                                numericInput("depSeed", "Specify Seed:", value=456, min=1, max=10000)
                               ),
                               br(),
                               plotOutput("poissonBIC"),
-                              p("Those points are being generated by checking the BIC of different models made like this for X in 1 through 5:", 
+                              p("Those points are being generated by checking the BIC of different models made like this for X in 1 through 5:", br(), 
                                 code("mX <- depmix(y~1, nstates=X,family=poisson(), data=ydf)", br(),
                                       "set.seed(1)", br(),
                                      "fmX <- fit(mX,em=em.control(maxit=200))"))
@@ -546,11 +545,15 @@ are depending on what the sequence is coming from. The default is NULL which onl
                                 The states are homozygous deletion, hemizygous deletion, diploid copy number, 
                                   diploid region of homozygosity, single copy gain, and two+ copy gain. The function uses a 
                                   SnpArrayExperiment object as well as special EmissionParam and TransitionParam objects of the 
-                                  respective probabilities.")
+                                  respective probabilities. The ", code("hmm2()"), " function needs a SnpArrayExperiment data object as well as emission and transition probabilities.
+                                  Both sets of probabilities require a special object made by ", code("EmissionParam()"), " or ", code("TransitionParam()"), ", both of which have
+                                  other optional arguments and defining the emission parameters includes defining the initial probabilities.")
                               ),
                      tabPanel("Thoughts",
                        p("This is a really specialized package and due to the amount of data required to use it well and general Bioconductor
-                         dependencies I am not going far into it.")
+                         dependencies I am not going far into it. If you choose to explore this more then installing a package of human SNP data, such as ", code("BSgenome.Hsapiens.UCSC.hg18")," is a good place to start.
+                         From there you can use vignettes to get more familiar with the package, but for my purposes here and in part due to the space constraints I have
+                         it is not something I will not be getting into examples of ", code("vanillaICE"), ".")
                        )
                      )),
       
@@ -569,11 +572,7 @@ are depending on what the sequence is coming from. The default is NULL which onl
                                 that could be read into R using the ", code('aphid::readPHMM()'), " function for other use."),
                               img(src="hmmerRun.png")
                               
-                              ),
-                     tabPanel("Use", tags$ol(
-                       tags$li("Using HMMER"), 
-                       tags$li("Steps etc"), 
-                       tags$li("More steps/data needs"))))),
+                              ))),
       
       ## Viterbi Algorithm should be included since that comes up a bunch
       tabItem("Viterbi_Paths", 
@@ -856,7 +855,7 @@ output$depGGplot<-renderPlot({
     )
   
 })
-output$depPlotly<-renderPlot({
+output$depPlotly<-renderPlotly({
   if(input$depSeedCheck==T){
     set.seed(input$depSeed)}
   N_train<-as.numeric(input$depTraining)
@@ -897,7 +896,7 @@ output$depPlotly<-renderPlot({
     ggtitle("Speed Data HMM Results")
   fig<-ggplotly(fig)
   
-  fig%>%
+  fig<-fig%>%
     layout(annotations = list(
       list(x = xDepth, y = 1.75, text = paste0("<b> Percentage Correct: ", round(100*mean(check$agreed, na.rm=T), 2), "% </b>"), showarrow = F, 
            bgcolor="white", bordercolor="#207d11", borderpad=10, borderwidth=3,
@@ -908,7 +907,11 @@ output$depPlotly<-renderPlot({
     ),
     yaxis = list(title = ' ', range=c(0, 2.5), ticksuffix="%")
     )
+  
+  fig
+  
 })
+
 output$sp500DT<-renderDataTable({
   head(sp500, 3)
 })
