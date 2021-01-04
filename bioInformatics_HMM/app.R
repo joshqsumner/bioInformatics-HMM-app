@@ -135,11 +135,11 @@ ui <- dashboardPage(skin="black",
                 id = "tabset1", height = "250px", width="600px",
                 tabPanel("Overview", tags$ol(
                   tags$li("The tabs to the left show examples of different HMM softwares/R packages."),
-                  tags$li("Code and presentation can be downloaded here: https://josh-sumner.shinyapps.io/bioinformatics_hmm/."))),
+                  tags$li("Reference URL in case you view this on github: https://josh-sumner.shinyapps.io/bioinformatics_hmm/."))),
                 tabPanel("Finding code/resources", tags$ol(
-                  tags$li("Code can be downloaded here: https://github.com/joshqsumner/bioInformatics-HMM-app."), 
-                  tags$li("Data can be viewed in tabs and the code is annotated to a degree in github"), 
-                  tags$li("Presentation: ")
+                  tags$li("Code and Presentation can be downloaded here: https://github.com/joshqsumner/bioInformatics-HMM-app."), 
+                  tags$li("Data can be viewed in tabs and the code is annotated to a degree in github"),
+                  tags$li("Email me if you have other questions about it: joshsumner@email.wustl.edu")
                 )))),
       #R packages Tabs
       
@@ -520,7 +520,7 @@ are depending on what the sequence is coming from. The default is NULL which onl
                               br(),
                               numericInput("lambda1", "Lambda for first part of data", value=1, min=0, max=5),
                               numericInput("length1", "Length of first part of data", value=50, min=1, max=5000),
-                              numericInput("lambda2", "Lambda for second part of data", value=2, min=0, max=5),
+                              numericInput("lambda2", "Lambda for second part of data", value=4, min=0, max=5),
                               numericInput("length2", "Length of second part of data", value=50, min=1, max=5000),
                               checkboxInput("bicSeedCheck", "Set a Sampling Seed?", value=T),
                               conditionalPanel(condition = "input.bicSeedCheck == true",
